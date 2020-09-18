@@ -137,7 +137,8 @@ fn main() -> Result<(), Error> {
             create_dir(&demo_path)?;
         }
 
-        demo_path.extend(path_name(src_path));
+        let dest_name = path_name(src_path).unwrap_or("demo.rec".to_string()).replace(" ", "_");
+        demo_path.push(dest_name);
         if !demo_path.exists() {
             dbg_print(format!("Copying demo from {} to {}", src_path, demo_path.to_str().unwrap_or("<cannot display path>")));
             copy(src_path, &demo_path)?;
@@ -222,7 +223,7 @@ fn main() -> Result<(), Error> {
         } else {
             println!("STATUS: FAILURE");
         }
-        println!("DEMO: {}", stat_values[0]);
+        println!("DEMO: {}", src_path);
         println!("MISSION: {}", stat_values[1]);
         println!("LEVEL NAME: {}", stat_values[2]);
         if success {
