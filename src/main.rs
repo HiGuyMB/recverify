@@ -238,7 +238,23 @@ fn main() -> Result<(), Error> {
             println!("GEM COUNT: N/A");
         }
         println!("FRAMES: {}", recording.frames.len());
-        println!("AVERAGE FPS: {}", recording.frames.len() as f32 / recording.frames.iter().map(|frame| frame.delta as u32).sum::<u32>() as f32 * 1000f32);
+
+        // Attempt to approximate FPS by ignoring the first long frames
+        let mut total_frames = 0;
+        let mut total_frame_time = 0f32;
+        let mut is_loading = true;
+        for frame in &recording.frames[10..] {
+            if is_loading && frame.delta < 50 {
+                is_loading = false;
+            }
+
+            if !is_loading {
+                total_frames += 1;
+                total_frame_time += (frame.delta as f32) / 1000f32;
+            }
+        }
+
+        println!("APPROXIMATE FPS: {}", total_frames as f32 / total_frame_time);
         println!("-----------------------");
     }
 
